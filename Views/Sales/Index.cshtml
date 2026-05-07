@@ -1,0 +1,168 @@
+﻿@model IEnumerable<IMS.Models.Sale>
+
+@{
+    ViewData["Title"] = "Sales";
+    var isManager = User.IsInRole("Manager");
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+    <div>
+        <h2 class="text-white mb-1">Sales</h2>
+        <div class="ims-muted">Track sales transactions and stock reduction history.</div>
+    </div>
+
+    <a class="btn btn-primary" asp-action="Create">
+        <i class="bi bi-plus-lg me-1"></i>Record Sale
+    </a>
+</div>
+
+<div class="card ims-card p-3 p-md-4">
+    <div class="row g-2 align-items-end mb-3">
+        <div class="col-md-5">
+            <label class="form-label ims-muted small">Search (product/category/user)</label>
+            <input id="saleSearch" class="form-control" placeholder="Type to filter sales..." />
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label ims-muted small">From</label>
+            <input id="fromDate" type="date" class="form-control" />
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label ims-muted small">To</label>
+            <input id="toDate" type="date" class="form-control" />
+        </div>
+
+        <div class="col-md-1 d-flex gap-2">
+            <button type="button" class="btn btn-outline-light w-100" id="clearFilters">
+                <i class="bi bi-x-circle"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2 mb-3">
+        <span class="ims-pill text-white">
+            <i class="bi bi-receipt me-1"></i>Total: <span id="countSales">@Model.Count()</span>
+        </span>
+        <span class="ims-pill text-white">
+            <i class="bi bi-bag-check me-1"></i>Units sold: <span id="countUnits">@Model.Sum(s => s.QuantitySold)</span>
+        </span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table align-middle mb-0" id="salesTable">
+            <thead>
+                <tr>
+                    <th style="min-width: 120px;">Date</th>
+                    <th style="min-width: 220px;">Product</th>
+                    <th class="text-end" style="min-width: 90px;">Qty</th>
+                    <th class="text-end" style="min-width: 120px;">Unit Price</th>
+                    <th class="text-end" style="min-width: 120px;">Total</th>
+                    <th style="min-width: 170px;">Recorded By</th>
+                    <th class="text-end" style="min-width: 140px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var s in Model.OrderByDescending(x => x.SaleDate))
+                {
+                    var productName = s.Product?.Name ?? "";
+                    var productCategory = s.Product?.Category ?? "";
+                    var userName = s.User?.UserName ?? "";
+
+                    var unitPrice = s.Product?.UnitPrice ?? 0m;
+                    var total = unitPrice * s.QuantitySold;
+
+                    <tr data-search="@($"{productName} {productCategory} {userName}".ToLower())"
+                        data-date="@s.SaleDate.ToString("yyyy-MM-dd")"
+                        data-units="@s.QuantitySold">
+                        <td>
+                            <div class="text-white">@s.SaleDate.ToString("yyyy-MM-dd")</div>
+                            <div class="ims-muted small">@s.SaleDate.ToString("hh:mm tt")</div>
+                        </td>
+                        <td>
+                            <div class="fw-semibold text-white">@productName</div>
+                            <div class="ims-muted small">@productCategory</div>
+                        </td>
+                        <td class="text-end text-white">@s.QuantitySold</td>
+                        <td class="text-end">@unitPrice.ToString("0.00")</td>
+                        <td class="text-end fw-semibold text-white">@total.ToString("0.00")</td>
+                        <td class="text-white">@userName</td>
+                        <td class="text-end">
+                            <a class="btn btn-sm btn-outline-light"
+                               asp-action="Edit"
+                               asp-route-id="@s.SaleID">
+                                <i class="bi bi-pencil me-1"></i>Edit
+                            </a>
+
+                            
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-3 ims-muted small">
+        Tip: If a product becomes low stock after a sale, it will appear in Notifications (Manager only).
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            const search = document.getElementById("saleSearch");
+            const from = document.getElementById("fromDate");
+            const to = document.getElementById("toDate");
+            const clear = document.getElementById("clearFilters");
+
+            const table = document.getElementById("salesTable");
+            const rows = Array.from(table.querySelectorAll("tbody tr"));
+
+            const countSales = document.getElementById("countSales");
+            const countUnits = document.getElementById("countUnits");
+
+            function apply() {
+                const q = (search.value || "").trim().toLowerCase();
+                const fromVal = from.value || "";
+                const toVal = to.value || "";
+
+                let visible = 0;
+                let units = 0;
+
+                rows.forEach(r => {
+                    const text = r.getAttribute("data-search") || "";
+                    const d = r.getAttribute("data-date") || "";
+                    const rowUnits = parseInt(r.getAttribute("data-units") || "0", 10);
+
+                    const matchSearch = !q || text.includes(q);
+                    const matchFrom = !fromVal || d >= fromVal;
+                    const matchTo = !toVal || d <= toVal;
+
+                    const show = matchSearch && matchFrom && matchTo;
+                    r.style.display = show ? "" : "none";
+
+                    if (show) {
+                        visible++;
+                        units += rowUnits;
+                    }
+                });
+
+                countSales.textContent = visible.toString();
+                countUnits.textContent = units.toString();
+            }
+
+            search.addEventListener("input", apply);
+            from.addEventListener("change", apply);
+            to.addEventListener("change", apply);
+
+            clear.addEventListener("click", () => {
+                search.value = "";
+                from.value = "";
+                to.value = "";
+                apply();
+            });
+
+            apply();
+        })();
+    </script>
+}

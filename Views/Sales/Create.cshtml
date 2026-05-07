@@ -1,0 +1,76 @@
+﻿@model IMS.Models.Sale
+
+@{
+    ViewData["Title"] = "Record Sale";
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+    <div>
+        <h2 class="text-white mb-1">Record Sale</h2>
+        <div class="ims-muted">Select a product and enter quantity sold. Stock is updated automatically.</div>
+    </div>
+
+    <a class="btn btn-outline-light" asp-action="Index">
+        <i class="bi bi-arrow-left me-1"></i>Back to Sales
+    </a>
+</div>
+
+<div class="row g-3">
+    <div class="col-12 col-lg-8">
+        <div class="card ims-card p-3 p-md-4">
+            <form asp-action="Create" method="post" class="mt-1">
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label">Product</label>
+                        <select asp-for="ProductID" class="form-select" asp-items="ViewBag.ProductID">
+                            <option value="">-- Select product --</option>
+                        </select>
+                        <span asp-validation-for="ProductID" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">Quantity Sold</label>
+                        <input asp-for="QuantitySold" class="form-control" type="number" min="1" step="1" placeholder="e.g. 2" />
+                        <span asp-validation-for="QuantitySold" class="text-danger small"></span>
+                        <div class="form-text ims-muted">
+                            The system validates stock availability before saving.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check2-circle me-1"></i>Save Sale
+                    </button>
+
+                    <a class="btn btn-outline-light" asp-action="Index">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+        <div class="card ims-card p-3 p-md-4">
+            <div class="fw-semibold text-white mb-2">
+                <i class="bi bi-lightbulb me-1"></i>Tips
+            </div>
+
+            <ul class="ims-muted mb-0">
+                <li class="mb-2">Choose the correct product before entering quantity.</li>
+                <li class="mb-2">Quantity must be greater than zero.</li>
+                <li class="mb-2">If insufficient stock exists, the system will prevent saving.</li>
+                <li>Manager can view low stock alerts in Notifications.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

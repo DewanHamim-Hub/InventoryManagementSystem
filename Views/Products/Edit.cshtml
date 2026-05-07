@@ -1,0 +1,117 @@
+﻿@model IMS.Models.Product
+
+@{
+    ViewData["Title"] = "Edit Product";
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+    <div>
+        <h2 class="text-white mb-1">Edit Product</h2>
+        <div class="ims-muted">Update product details and threshold. Quantity is managed via sales/restocks.</div>
+    </div>
+
+    <a class="btn btn-outline-light" asp-action="Index">
+        <i class="bi bi-arrow-left me-1"></i>Back to Products
+    </a>
+</div>
+
+<div class="row g-3">
+    <div class="col-12 col-lg-8">
+        <div class="card ims-card p-3 p-md-4">
+            <form asp-action="Edit" method="post" class="mt-1">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" asp-for="ProductID" />
+
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label asp-for="Name" class="form-label">Product Name</label>
+                        <input asp-for="Name" class="form-control" placeholder="e.g. Milk 1L, Rice 5kg" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label asp-for="Category" class="form-label">Category</label>
+                        <input asp-for="Category" class="form-control" placeholder="e.g. Dairy, Grocery, Cleaning" />
+                        <span asp-validation-for="Category" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label asp-for="UnitPrice" class="form-label">Unit Price</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-transparent text-white-50 border-0">৳</span>
+                            <input asp-for="UnitPrice" class="form-control" type="number" min="0" step="0.01" placeholder="0.00" />
+                        </div>
+                        <span asp-validation-for="UnitPrice" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">Current Quantity</label>
+                        <input class="form-control" value="@Model.Quantity" readonly />
+                        <div class="form-text ims-muted">
+                            Quantity is updated automatically by Sales and Restocks.
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label asp-for="Threshold" class="form-label">Low-Stock Threshold</label>
+                        <input asp-for="Threshold" class="form-control" type="number" min="0" step="1" placeholder="e.g. 5" />
+                        <span asp-validation-for="Threshold" class="text-danger small"></span>
+                        <div class="form-text ims-muted">
+                            Products at or below threshold appear in Notifications.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save me-1"></i>Save Changes
+                    </button>
+
+                    <a class="btn btn-outline-light" asp-action="Index">Cancel</a>
+
+                    <a class="btn btn-outline-danger ms-auto"
+                       asp-action="Delete"
+                       asp-route-id="@Model.ProductID">
+                        <i class="bi bi-trash me-1"></i>Delete
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+        <div class="card ims-card p-3 p-md-4">
+            <div class="fw-semibold text-white mb-2">
+                <i class="bi bi-info-circle me-1"></i>Status
+            </div>
+
+            @if (Model.Quantity <= Model.Threshold)
+            {
+                <div class="alert alert-warning mb-3">
+                    <i class="bi bi-exclamation-triangle me-1"></i>
+                    This product is currently <strong>LOW</strong> (at or below threshold).
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-success mb-3">
+                    <i class="bi bi-check2-circle me-1"></i>
+                    Stock level is <strong>OK</strong>.
+                </div>
+            }
+
+            <div class="ims-muted small">
+                Product ID: <span class="text-white">@Model.ProductID</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

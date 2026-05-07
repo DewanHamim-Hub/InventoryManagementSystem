@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - IMS</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+</head>
+
+<body class="ims-body @(ViewData["BodyClass"] ?? "")">
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark ims-navbar sticky-top">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center gap-2" asp-controller="Home" asp-action="Index">
+                    <span class="ims-logo">IMS</span>
+                    <span class="fw-semibold">Inventory</span>
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        @if (User?.Identity?.IsAuthenticated ?? false)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Home" asp-action="Index"><i class="bi bi-grid me-1"></i>Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Products" asp-action="Index"><i class="bi bi-box-seam me-1"></i>Products</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Sales" asp-action="Index"><i class="bi bi-receipt me-1"></i>Sales</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Restocks" asp-action="Index"><i class="bi bi-truck me-1"></i>Restocks</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Search" asp-action="Index"><i class="bi bi-search me-1"></i>Search</a>
+                            </li>
+
+                            @if (User.IsInRole("Manager"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Notifications" asp-action="Index"><i class="bi bi-bell me-1"></i>Notifications</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Reports" asp-action="Index"><i class="bi bi-bar-chart me-1"></i>Reports</a>
+                                </li>
+                            }
+                        }
+                    </ul>
+
+                    <ul class="navbar-nav ms-auto">
+                        @if (User?.Identity?.IsAuthenticated ?? false)
+                        {
+                            <li class="nav-item">
+                                <span class="navbar-text me-3 small text-white-50">
+                                    <i class="bi bi-person-circle me-1"></i>@User.Identity!.Name
+                                    <span class="ms-1 badge rounded-pill bg-light text-dark">@((User.IsInRole("Manager")) ? "Manager" : "Staff")</span>
+                                </span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-outline-light btn-sm" asp-controller="Account" asp-action="Logout">
+                                    <i class="bi bi-box-arrow-right me-1"></i>Logout
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="btn btn-outline-light btn-sm" asp-controller="Account" asp-action="Login">
+                                    <i class="bi bi-box-arrow-in-right me-1"></i>Login
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container py-4">
+        @RenderBody()
+    </main>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

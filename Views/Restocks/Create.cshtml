@@ -1,0 +1,75 @@
+﻿@model IMS.Models.Restock
+
+@{
+    ViewData["Title"] = "Record Restock";
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+    <div>
+        <h2 class="text-white mb-1">Record Restock</h2>
+        <div class="ims-muted">Select a product and enter quantity added. Stock is updated automatically.</div>
+    </div>
+
+    <a class="btn btn-outline-light" asp-action="Index">
+        <i class="bi bi-arrow-left me-1"></i>Back to Restocks
+    </a>
+</div>
+
+<div class="row g-3">
+    <div class="col-12 col-lg-8">
+        <div class="card ims-card p-3 p-md-4">
+            <form asp-action="Create" method="post" class="mt-1">
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label">Product</label>
+                        <select asp-for="ProductID" class="form-select" asp-items="ViewBag.ProductID">
+                            <option value="">-- Select product --</option>
+                        </select>
+                        <span asp-validation-for="ProductID" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">Quantity Added</label>
+                        <input asp-for="QuantityAdded" class="form-control" type="number" min="1" step="1" placeholder="e.g. 10" />
+                        <span asp-validation-for="QuantityAdded" class="text-danger small"></span>
+                        <div class="form-text ims-muted">
+                            Quantity must be greater than zero.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check2-circle me-1"></i>Save Restock
+                    </button>
+
+                    <a class="btn btn-outline-light" asp-action="Index">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+        <div class="card ims-card p-3 p-md-4">
+            <div class="fw-semibold text-white mb-2">
+                <i class="bi bi-lightbulb me-1"></i>Tips
+            </div>
+
+            <ul class="ims-muted mb-0">
+                <li class="mb-2">Confirm the correct product before saving.</li>
+                <li class="mb-2">Use realistic quantities based on deliveries.</li>
+                <li>Restock updates stock immediately.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

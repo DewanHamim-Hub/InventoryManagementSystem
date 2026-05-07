@@ -1,0 +1,164 @@
+﻿@model IMS.ViewModels.ReportsViewModel
+
+@{
+    ViewData["Title"] = "Reports";
+}
+
+<h2>Reports</h2>
+
+<form method="get" class="row g-3 mb-3">
+    <div class="col-md-3">
+        <label class="form-label">Period</label>
+        <select name="period" class="form-select">
+            <option value="Daily" selected="@(Model.Period == "Daily")">Daily</option>
+            <option value="Weekly" selected="@(Model.Period == "Weekly")">Weekly</option>
+            <option value="Monthly" selected="@(Model.Period == "Monthly")">Monthly</option>
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Daily Date</label>
+        <input type="date" name="date" class="form-control" value="@(Model.Date?.ToString("yyyy-MM-dd") ?? "")" />
+        <div class="form-text">Used when Period = Daily</div>
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Week Start</label>
+        <input type="date" name="weekStart" class="form-control" value="@(Model.WeekStart?.ToString("yyyy-MM-dd") ?? "")" />
+        <div class="form-text">Used when Period = Weekly</div>
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Monthly (Year / Month)</label>
+        <div class="d-flex gap-2">
+            <input type="number" name="year" class="form-control" placeholder="Year" value="@(Model.Year?.ToString() ?? "")" />
+            <input type="number" name="month" class="form-control" placeholder="Month" min="1" max="12" value="@(Model.Month?.ToString() ?? "")" />
+        </div>
+        <div class="form-text">Used when Period = Monthly</div>
+    </div>
+
+    <div class="col-12">
+        <button class="btn btn-primary" type="submit">Generate</button>
+    </div>
+</form>
+
+<div class="mb-3">
+    <strong>Range:</strong> @Model.From.ToString("yyyy-MM-dd") to @Model.To.ToString("yyyy-MM-dd")
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-3">
+        <div class="card p-3">
+            <div class="fw-bold">Units Sold</div>
+            <div>@Model.TotalUnitsSold</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3">
+            <div class="fw-bold">Sales Value</div>
+            <div>@Model.TotalSalesValue.ToString("0.00")</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3">
+            <div class="fw-bold">Units Restocked</div>
+            <div>@Model.TotalUnitsRestocked</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3">
+            <div class="fw-bold">Net Units Change</div>
+            <div>@Model.NetUnitsChange</div>
+        </div>
+    </div>
+</div>
+
+<h4>Top Products (by Units Sold)</h4>
+@if (Model.TopProducts.Count == 0)
+{
+    <p>No sales found for this period.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Units Sold</th>
+                <th>Sales Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var row in Model.TopProducts)
+            {
+                <tr>
+                    <td>@row.ProductName</td>
+                    <td>@row.UnitsSold</td>
+                    <td>@row.SalesValue.ToString("0.00")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<hr />
+
+<h4>Sales Log</h4>
+@if (Model.Sales.Count == 0)
+{
+    <p>No sales records.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Product</th>
+                <th>Qty</th>
+                <th>Unit Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in Model.Sales)
+            {
+                <tr>
+                    <td>@s.SaleDate.ToString("yyyy-MM-dd")</td>
+                    <td>@s.Product?.Name</td>
+                    <td>@s.QuantitySold</td>
+                    <td>@(s.Product != null ? s.Product.UnitPrice.ToString("0.00") : "")</td>
+                    <td>@(s.Product != null ? (s.QuantitySold * s.Product.UnitPrice).ToString("0.00") : "")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<h4>Restock Log</h4>
+@if (Model.Restocks.Count == 0)
+{
+    <p>No restock records.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Product</th>
+                <th>Qty Added</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var r in Model.Restocks)
+            {
+                <tr>
+                    <td>@r.RestockDate.ToString("yyyy-MM-dd")</td>
+                    <td>@r.Product?.Name</td>
+                    <td>@r.QuantityAdded</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

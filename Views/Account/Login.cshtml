@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "Welcome";
+    ViewData["BodyClass"] = "page-login";
+}
+
+<div class="card ims-card p-4 p-md-5 mx-auto">
+    <div class="text-center mb-4">
+        
+
+        <h3 class="text-white mb-1">Welcome to Inventory Management System</h3>
+        <div class="ims-muted">
+            Please sign in to continue managing inventory, sales, and reports.
+        </div>
+    </div>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger text-center">
+            @ViewBag.Error
+        </div>
+    }
+
+    <form asp-action="Login" method="post" class="mt-4">
+        @Html.AntiForgeryToken()
+
+        <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input name="username" class="form-control" autocomplete="username" required />
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label">Password</label>
+            <input name="password" type="password" class="form-control" autocomplete="current-password" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 mb-3">
+            <i class="bi bi-box-arrow-in-right me-1"></i>Login
+        </button>
+    </form>
+
+    <div class="text-center ims-muted small">
+        Demo Accounts:
+        <div class="mt-1">
+            <span class="ims-pill text-white">manager / Manager@123</span>
+            <span class="ims-pill text-white">staff / Staff@123</span>
+        </div>
+    </div>
+</div>

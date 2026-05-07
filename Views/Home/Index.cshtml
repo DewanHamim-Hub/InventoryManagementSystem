@@ -1,0 +1,134 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    ViewData["BodyClass"] = "page-dashboard";
+    var isManager = User.IsInRole("Manager");
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-4">
+    <div>
+        <h2 class="text-white mb-1">Dashboard</h2>
+        <div class="ims-muted">Quick access to your inventory tools.</div>
+    </div>
+
+    <div class="ims-pill text-white">
+        <i class="bi bi-person-badge me-1"></i>
+        @(isManager ? "Manager Access" : "Staff Access")
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-12 col-md-6 col-xl-4">
+        <a class="text-decoration-none" asp-controller="Products" asp-action="Index">
+            <div class="card ims-card p-3 h-100">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="fw-semibold text-white">Products</div>
+                        <div class="ims-muted small">View inventory list & stock levels.</div>
+                    </div>
+                    <div class="display-6 text-white-50"><i class="bi bi-box-seam"></i></div>
+                </div>
+
+                @if (isManager)
+                {
+                    <div class="mt-3 ims-muted small">
+                        <i class="bi bi-shield-check me-1"></i>Manager can add / edit / delete products
+                    </div>
+                }
+                else
+                {
+                    <div class="mt-3 ims-muted small">
+                        <i class="bi bi-eye me-1"></i>Staff can view products only
+                    </div>
+                }
+            </div>
+        </a>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <a class="text-decoration-none" asp-controller="Sales" asp-action="Create">
+            <div class="card ims-card p-3 h-100">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="fw-semibold text-white">Record Sale</div>
+                        <div class="ims-muted small">Reduce stock & save sales log.</div>
+                    </div>
+                    <div class="display-6 text-white-50"><i class="bi bi-receipt"></i></div>
+                </div>
+                <div class="mt-3 ims-muted small">
+                    <i class="bi bi-check2-circle me-1"></i>Validates available stock automatically
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <a class="text-decoration-none" asp-controller="Restocks" asp-action="Create">
+            <div class="card ims-card p-3 h-100">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="fw-semibold text-white">Record Restock</div>
+                        <div class="ims-muted small">Increase stock & save restock log.</div>
+                    </div>
+                    <div class="display-6 text-white-50"><i class="bi bi-truck"></i></div>
+                </div>
+                <div class="mt-3 ims-muted small">
+                    <i class="bi bi-arrow-up-circle me-1"></i>Keeps stock quantity consistent
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <a class="text-decoration-none" asp-controller="Search" asp-action="Index">
+            <div class="card ims-card p-3 h-100">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="fw-semibold text-white">Search & Filter</div>
+                        <div class="ims-muted small">Products, Sales, Restocks by date/keyword.</div>
+                    </div>
+                    <div class="display-6 text-white-50"><i class="bi bi-search"></i></div>
+                </div>
+                <div class="mt-3 ims-muted small">
+                    <i class="bi bi-funnel me-1"></i>Advanced filtering included
+                </div>
+            </div>
+        </a>
+    </div>
+
+    @if (isManager)
+    {
+        <div class="col-12 col-md-6 col-xl-4">
+            <a class="text-decoration-none" asp-controller="Notifications" asp-action="Index">
+                <div class="card ims-card p-3 h-100">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="fw-semibold text-white">Low Stock Notifications</div>
+                            <div class="ims-muted small">See products at/below threshold.</div>
+                        </div>
+                        <div class="display-6 text-white-50"><i class="bi bi-bell"></i></div>
+                    </div>
+                    <div class="mt-3 ims-muted small">
+                        <i class="bi bi-exclamation-triangle me-1"></i>Visible to Manager only
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-4">
+            <a class="text-decoration-none" asp-controller="Reports" asp-action="Index">
+                <div class="card ims-card p-3 h-100">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="fw-semibold text-white">Reports</div>
+                            <div class="ims-muted small">Daily/Weekly/Monthly analytics.</div>
+                        </div>
+                        <div class="display-6 text-white-50"><i class="bi bi-bar-chart"></i></div>
+                    </div>
+                    <div class="mt-3 ims-muted small">
+                        <i class="bi bi-graph-up me-1"></i>Generated on demand (not stored)
+                    </div>
+                </div>
+            </a>
+        </div>
+    }
+</div>

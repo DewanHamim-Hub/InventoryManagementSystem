@@ -1,0 +1,152 @@
+﻿@model IMS.ViewModels.SearchViewModel
+
+@{
+    ViewData["Title"] = "Search & Filter";
+}
+
+<h2>Search & Filter</h2>
+
+<form method="get" class="row g-3 mb-4">
+    <div class="col-md-4">
+        <label class="form-label">Keyword (name/category)</label>
+        <input name="keyword" class="form-control" value="@Model.Keyword" placeholder="e.g. rice, beverage, soap" />
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Category</label>
+        <select name="category" class="form-select">
+            <option value="">All</option>
+
+            @foreach (var c in Model.Categories)
+            {
+                if (Model.Category == c)
+                {
+                    <option value="@c" selected>@c</option>
+                }
+                else
+                {
+                    <option value="@c">@c</option>
+                }
+            }
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <label class="form-label">From</label>
+        <input type="date" name="fromDate" class="form-control" value="@(Model.FromDate?.ToString("yyyy-MM-dd") ?? "")" />
+    </div>
+
+    <div class="col-md-2">
+        <label class="form-label">To</label>
+        <input type="date" name="toDate" class="form-control" value="@(Model.ToDate?.ToString("yyyy-MM-dd") ?? "")" />
+    </div>
+
+    <div class="col-md-1 d-flex align-items-end">
+        <button class="btn btn-primary w-100" type="submit">Go</button>
+    </div>
+</form>
+
+<hr />
+
+<h4>Products (@Model.Products.Count)</h4>
+@if (Model.Products.Count == 0)
+{
+    <p>No products found.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Unit Price</th>
+                <th>Qty</th>
+                <th>Threshold</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var p in Model.Products)
+        {
+            <tr>
+                <td>@p.Name</td>
+                <td>@p.Category</td>
+                <td>@p.UnitPrice.ToString("0.00")</td>
+                <td>@p.Quantity</td>
+                <td>@p.Threshold</td>
+                <td>
+                    @if (p.Quantity <= p.Threshold)
+                    {
+                        <span class="badge bg-danger">LOW</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">OK</span>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+<h4 class="mt-4">Sales Log (@Model.Sales.Count)</h4>
+@if (Model.Sales.Count == 0)
+{
+    <p>No sales found.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Product</th>
+                <th>Qty</th>
+                <th>Recorded By</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var s in Model.Sales)
+        {
+            <tr>
+                <td>@s.SaleDate.ToString("yyyy-MM-dd")</td>
+                <td>@s.Product?.Name</td>
+                <td>@s.QuantitySold</td>
+                <td>@(s.User?.UserName ?? "")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+<h4 class="mt-4">Restock Log (@Model.Restocks.Count)</h4>
+@if (Model.Restocks.Count == 0)
+{
+    <p>No restocks found.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Product</th>
+                <th>Qty Added</th>
+                <th>Recorded By</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var r in Model.Restocks)
+        {
+            <tr>
+                <td>@r.RestockDate.ToString("yyyy-MM-dd")</td>
+                <td>@r.Product?.Name</td>
+                <td>@r.QuantityAdded</td>
+                <td>@(r.User?.UserName ?? "")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

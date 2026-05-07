@@ -1,0 +1,44 @@
+﻿@model List<IMS.Models.Product>
+
+@{
+    ViewData["Title"] = "Low Stock Notifications";
+}
+
+<h2>Low Stock Notifications</h2>
+
+@if (Model == null || Model.Count == 0)
+{
+    <div class="alert alert-success">
+        No low-stock products right now.
+    </div>
+}
+else
+{
+    <div class="alert alert-warning">
+        The following products are at or below their threshold.
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Quantity</th>
+                <th>Threshold</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td>@p.Name</td>
+                    <td>@p.Category</td>
+                    <td>@p.Quantity</td>
+                    <td>@p.Threshold</td>
+                    <td><span class="badge bg-danger">LOW</span></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

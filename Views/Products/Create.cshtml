@@ -1,0 +1,100 @@
+﻿@model IMS.Models.Product
+
+@{
+    ViewData["Title"] = "Add Product";
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+    <div>
+        <h2 class="text-white mb-1">Add Product</h2>
+        <div class="ims-muted">Create a new product and set its low-stock threshold.</div>
+    </div>
+
+    <a class="btn btn-outline-light" asp-action="Index">
+        <i class="bi bi-arrow-left me-1"></i>Back to Products
+    </a>
+</div>
+
+<div class="row g-3">
+    <div class="col-12 col-lg-8">
+        <div class="card ims-card p-3 p-md-4">
+            <form asp-action="Create" method="post" class="mt-1">
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label asp-for="Name" class="form-label">Product Name</label>
+                        <input asp-for="Name" class="form-control" placeholder="e.g. Milk 1L, Rice 5kg" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label asp-for="Category" class="form-label">Category</label>
+                        <input asp-for="Category" class="form-control" placeholder="e.g. Dairy, Grocery, Cleaning" />
+                        <span asp-validation-for="Category" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label asp-for="UnitPrice" class="form-label">Unit Price</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-transparent text-white-50 border-0">৳</span>
+                            <input asp-for="UnitPrice" class="form-control" type="number" min="0" step="0.01" placeholder="0.00" />
+                        </div>
+                        <span asp-validation-for="UnitPrice" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label asp-for="Quantity" class="form-label">Initial Stock Quantity</label>
+                        <input asp-for="Quantity" class="form-control" type="number" min="0" step="1" placeholder="e.g. 20" />
+                        <span asp-validation-for="Quantity" class="text-danger small"></span>
+                        <div class="form-text ims-muted">
+                            This is the starting stock. Future changes happen via Sales and Restocks.
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label asp-for="Threshold" class="form-label">Low-Stock Threshold</label>
+                        <input asp-for="Threshold" class="form-control" type="number" min="0" step="1" placeholder="e.g. 5" />
+                        <span asp-validation-for="Threshold" class="text-danger small"></span>
+                        <div class="form-text ims-muted">
+                            When quantity reaches this level or below, it appears in Notifications.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check2-circle me-1"></i>Create Product
+                    </button>
+
+                    <a class="btn btn-outline-light" asp-action="Index">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+        <div class="card ims-card p-3 p-md-4">
+            <div class="fw-semibold text-white mb-2">
+                <i class="bi bi-lightbulb me-1"></i>Tips
+            </div>
+
+            <ul class="mb-0 ims-muted">
+                <li class="mb-2">Use clear product names (include size/unit if needed).</li>
+                <li class="mb-2">Keep categories consistent (e.g., “Dairy”, not “dairy”).</li>
+                <li class="mb-2">Set a realistic threshold to avoid stockouts.</li>
+                <li>Unit price supports decimals (e.g., 49.50).</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
